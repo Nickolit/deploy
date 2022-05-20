@@ -4,9 +4,12 @@
 # Copyleft (c) by Nick Burakovets
 #-------------------------------------------------------------
 ---
+
 apiVersion : apps/v1
 kind: Deployment
+
 # Указываем название деплоя
+
 metadata:
   name: my-web-deployment-autoscaling
   labels:
@@ -22,7 +25,9 @@ spec:
       labels:
         project: supprod
     spec:
+    
     # Берём готовый имидж с докер хаба и вывод делаем на 80 порт
+    
       containers:
         - name : supprod-web
           image: nickolit/k8sphp:version=latest
@@ -30,8 +35,11 @@ spec:
             - containerPort: 80
 
 ---
+
 apiVersion: autoscaling/v2beta1
+
 # Подключаем ХПА с требованиями по цпу и памяти
+
 kind: HorizontalPodAutoscaler
 metadata:
   name: my-autoscaling
@@ -39,19 +47,27 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v2beta1v1
     kind: Deployment
+    
     # Указываем наш деплой
+    
     name: my-web-deployment-autoscaling
+    
   # По требованиям ставим максимальное кол-во подов на 4 (мин 2 оставляю на случай если 1 упадёт, и пока восстановится, 1 "под" запасной останется)
+  
   minReplicas: 2
   maxReplicas: 4
   metrics:
   - type: Resource
     resource:
+    
       # Устанавливаем среднее значение употребления цпу
+      
       name: cpu
       targetAverageUtilization: 0.1
   - type: Resource
     resource:
+    
       # Устанавливаем среднее значение потребления памяти
+      
       name: memory
       targetAverageUtilization: 128M
